@@ -7,7 +7,7 @@ La commande va créer un dossier "Billboard-Project" avec tous les dossiers et f
 Lorsqu'on veut mettre à jour sur le git:
 Dans le dossier **"Billboard-Project"**:
 
->  Mettre tous les dossiers/fichiers du projet
+Mettre tous les dossiers/fichiers du projet
 
   Taper sur le bash : 
   
