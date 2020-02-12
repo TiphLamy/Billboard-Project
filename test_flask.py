@@ -1,15 +1,18 @@
 from pymongo import MongoClient
 from flask import Flask
+import pandas as pd
+import json
 app = Flask(__name__)
 
 @app.route('/test')
 def hello_world():
-    client = MongoClient()
-    print(client.database_names()[1])
-	#bb = client["billboard"]
+	scrap = pd.read_json("./newscrawler/newscrawler/spiders/scrap200.json")
+    	#client = MongoClient()
+    	#print(client.database_names()[1])
+		#bb = client["billboard"]
 
-    #Billboard_200 = bb['billboard']
-    return client.database_names()[1]
+    	#Billboard_200 = bb['billboard']
+    return scrap
     #return str("collection KIRK: ") + str(Billboard_200.find_one({"album":"KIRK"}))
 
 
