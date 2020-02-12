@@ -1,21 +1,39 @@
 from pymongo import MongoClient
-from flask import Flask
+from flask import Flask, render_template
 import pandas as pd
+import matplotlib.pyplot as plt
+import plotly
+import plotly.graph_objs as go
 import json
+import numpy as np
+from flask import render_template, render_template_string
 app = Flask(__name__)
 
 @app.route('/test')
-def hello_world():
-	scrap = pd.read_json("./newscrawler/newscrawler/spiders/scrap200.json")
-    	#client = MongoClient()
-    	#print(client.database_names()[1])
-		#bb = client["billboard"]
+def index():
+	bar = create_plot()
+	return render_template('index.html', plot=bar)
 
-    	#Billboard_200 = bb['billboard']
-    return scrap
+
+def create_plot():
+	scrap = pd.read_json("./newscrawler/newscrawler/spiders/scrap200.json")
+	artist = scrap.groupby('artist').size()
+	artist = artist.sort_values(ascending=True)
+	data = [ go.Bar(x=artist[-20:].index, y = artist[-20:].values)]
+	graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+
+	return graphJSON #plt.barh(artist[-20:].index, artist[-20:].values, align='center', alpha=0.5)
+
+
+    #client = MongoClient()
+    #print(client.database_names()[1])
+	#bb = client["billboard"]
+
+    #Billboard_200 = bb['billboard']
+
     #return str("collection KIRK: ") + str(Billboard_200.find_one({"album":"KIRK"}))
 
 
 if __name__ == '__main__':
-    print("Running...")
-    app.run(debug=True, port=2746)
+	print("Running...")
+	app.run(debug=True, port=2746)
