@@ -1,4 +1,3 @@
-from pymongo import MongoClient
 from flask import Flask
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,6 +10,8 @@ from bokeh.plotting import figure
 from bokeh.resources import CDN
 from jinja2 import Template
 from bokeh.io import show, output_file
+import os
+from pymongo import MongoClient
 
 from flask import render_template, render_template_string
 app = Flask(__name__)
@@ -38,14 +39,25 @@ artist = artist.sort_values(ascending=True)
 </body>
 """)
 
+client = MongoClient("mongo")
+db = client["client_name"]
+billboard_200 = db["billboard"]
 
 @app.route('/')
 def root():
     return page.render(resources=CDN.render())
 
+@app.route('/item')
+def item():
+    output_file("templates/item.html")
+    _items = billboard_200.find()
+    items = [item for item in _items]
+    return render_template('item.html', items=items)
+
 @app.route('/plot')
 def plot():
     scrap = pd.read_json("./newscrawler/newscrawler/spiders/scrap200.json")
+
     artist = scrap.groupby('artist').size()
     artist = artist.sort_values(ascending=True)
 
@@ -54,15 +66,15 @@ def plot():
     #p.yaxis.axis_label = "number of albums"
     #p.circle(artist[-20:].index, artist[-20:].values)
 
-    output_file("bar_sorted.html")
-    p = figure(x_range=list(artist[-20:].index), plot_height=350, title="Album Counts", toolbar_location=None, tools="")
+    output_file("templates/bar_sorted.html")
+    p = figure(x_range=list(artist[-20:].index), plot_width=1600,plot_height=800, title="Album Counts", toolbar_location=None, tools="")
     p.vbar(x=list(artist[-20:].index), top=list(artist[-20:].values), width=0.9)
 
     p.xgrid.grid_line_color = None
     p.y_range.start = 0
 
-    show(p)
-    return redirect_to_url("bar_sorted.html")#json.dumps(json_item(p, "myplot"))
+    #show(p)
+    return render_template("bar_sorted.html")#json.dumps(json_item(p, "myplot"))
 
 @app.route('/test')
 def index():

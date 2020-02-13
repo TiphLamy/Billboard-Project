@@ -29,18 +29,18 @@ services:
     container_name: mongo
     ports:
         - 27018:27017
-  notebook:
-    build: .
-    ports:
-     - "8889:8888"
-    command: ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
-    volumes:
-      - ./:/home/dev/code/
-  
-#  flask:
+#  notebook:
 #    build: .
 #    ports:
-#     - "2745:2746"
-#    command: ["pipenv", "run",  "bash", "run"]
+#     - "8889:8888"
+#    command: ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
 #    volumes:
 #      - ./:/home/dev/code/
+  
+  flask:
+    build: .
+    ports:
+     - "2745:2746"
+    command: ["pipenv", "run",  "bash", "run"]
+    volumes:
+      - ./:/home/dev/code/
