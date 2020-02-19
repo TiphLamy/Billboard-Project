@@ -56,10 +56,30 @@ def item():
         items.append(item)
     #items = [item for item in _items]
     #print("collection Eminem: " + str(billboard_200.find_one({"artist":"Eminem"})))
+    return render_template('item.html', items=items)
 
-    artist = billboard_200.aggregate([{"$group": {"$artist","$sum"}}])
+@app.route('/bargraph')
+def bargraph():
+    output_file("templates/bargraph.html")
+    artist = billboard_200.aggregate([{ "$group": { "_id": "$artist", "sum": { "$sum": 1 } } }])
+    artist = sorted(list(artist), key=lambda k: k['sum'],reverse=True)
+    
+    artists = []
+    sums = []
+    for i in artist:
+        artists.append(i["_id"])
+        sums.append(i["sum"])
 
-    return render_template('item.html', items=liste(artist))
+    p = figure(x_range=artists[:20], plot_width=1600,plot_height=800, title="Album Counts", toolbar_location=None, tools="")
+    p.vbar(x=artists[:20], top=sums[:20], width=0.9)
+
+    p.xgrid.grid_line_color = None
+    p.y_range.start = 0
+
+    show(p)
+
+    return render_template("bargraph.html")
+
 
 @app.route('/plot')
 def plot():
