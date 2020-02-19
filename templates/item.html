@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Billboard 200</title>
+</head>
+<body> Coucou
+<div class="container">
+	{% if items%}
+	🤓
+	{% for item in items %}
+		<div>
+			{{item}} <br/>
+		</div> 
+	{% endfor %}
+	{% else %}
+	Else
+	{% endif %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart" id="bargraph">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

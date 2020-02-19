@@ -39,7 +39,7 @@ artist = artist.sort_values(ascending=True)
 </body>
 """)
 
-client = MongoClient("mongo")
+client = MongoClient()
 db = client["client_name"]
 billboard_200 = db["billboard"]
 
@@ -51,8 +51,15 @@ def root():
 def item():
     output_file("templates/item.html")
     _items = billboard_200.find()
-    items = [item for item in _items]
-    return render_template('item.html', items=items)
+    items = []
+    for item in _items:
+        items.append(item)
+    #items = [item for item in _items]
+    #print("collection Eminem: " + str(billboard_200.find_one({"artist":"Eminem"})))
+
+    artist = billboard_200.aggregate([{"$group": {"$artist","$sum"}}])
+
+    return render_template('item.html', items=liste(artist))
 
 @app.route('/plot')
 def plot():

@@ -34,7 +34,7 @@ class MongoPipeline(object):
     collection_name = 'billboard'
 
     def open_spider(self, spider):
-        self.client = MongoClient("mongo") #par défaut, paramétré sur localhost port 27017
+        self.client = MongoClient() #par défaut, paramétré sur localhost port 27017
         self.db = self.client["client_name"]
 
     def close_spider(self, spider):
