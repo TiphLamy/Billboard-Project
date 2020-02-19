@@ -14,8 +14,7 @@ RUN  pip install --upgrade pip &&  pip install pipenv && pipenv install --skip-l
 
 #CMD ["pipenv", "run",  "bash", "run"]
 
-CMD ["pipenv", "run", "flask", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
-#CMD ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
+CMD ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
 #CMD ["/bin/bash"]
 
 
