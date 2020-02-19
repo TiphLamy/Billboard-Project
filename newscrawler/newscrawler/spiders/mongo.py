@@ -14,13 +14,5 @@ class MongoPipeline(object):
         self.client.close()
 
     def process_item(self, item, spider):
-        #self.db[self.collection_name].insert_one(dict(item))
         self.db[self.collection_name].insert_one(dict(item))
-        #print("collection KIRK: " + str(self.db[self.collection_name].find_one({"album":"KIRK"})))
-        #print("collection gospel: " + str(self.db[self.collection_name].find_one({"album":"Ghetto Gospel"})))
-
-        #db_music = client.series
-        #collection_billboard = db_music['billboard']
-        #collection_billboard.insert_one({"album" :album,"artist":artist, "rank":rank})
-
         return item

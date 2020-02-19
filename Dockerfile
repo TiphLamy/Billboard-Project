@@ -19,4 +19,4 @@ CMD ["pipenv", "run", "jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--
 
 
 #Pour utiliser flask: l'ajouter dans les éléments à exécuter au dessus et ouvrir ses ports dans docker-compose.yml à la place de jupyter
-# "flask" ou 'jupyter", "notebook"
+# "flask" ou "jupyter", "notebook"
