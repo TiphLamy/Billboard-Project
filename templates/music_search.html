@@ -1,5 +1,59 @@
-<form method="POST" action="/MusicSearch">
-    {{ form.hidden_tag() }}
-    {{ form.typing.label }} {{ form.typing(size=20) }}
-    <input type="submit" value="Search">
-</form>
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <meta charset="UTF-8"> -->
+    <title>Billboard 200</title>
+    <link href="http://cdn.pydata.org/bokeh/release/bokeh-1.4.0.min.css" rel="stylesheet">
+    <link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.4.0.min.css" rel="stylesheet">
+  </head>
+
+  <body style="background-color: #c3c5d8">
+    <center>
+
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Billboard_logo.svg/1280px-Billboard_logo.svg.png" width="400px">
+  <div style="height:50px;display:block;"> </div>
+
+	<form method="POST" action="/MusicSearch">
+	  {{ form.hidden_tag() }}
+	  {{ form.typing.label }} {{ form.typing(size=20) }}
+	  <input type="submit" value="Search">
+	</form>
+    
+  <h2>Current top 20 albums</h2>
+
+  <div class="container">
+  </div>
+    <table border="1">
+        <td style="width:100px" bgcolor="788aa3" ><strong>Rank</strong></td></br>
+        <td style="width:300px" bgcolor="788aa3"><strong>Album</strong></td>
+        <td style="width:200px" bgcolor="788aa3"><strong>Artist</strong></td>
+    </table>
+    {% for i in range(albums|length) %}
+    <table border="1">
+      <tbody>
+          <tr>
+              <td style="width:100px" bgcolor="e8ddb5" >{{ranks[i]}}</td></br>
+              <td style="width:300px" bgcolor="b2c9ab">{{albums[i]}}</td>
+              <td style="width:200px" bgcolor="92b6b1">{{artists[i]}}</td>
+              
+          </tr>
+      </tbody>
+    </table>
+    {% endfor %}
+
+  <br>
+  <h2>Artists with the most albums in the top 200</h2>
+
+  {{ the_div|safe }}
+  <script src="http://cdn.pydata.org/bokeh/release/bokeh-1.4.0.min.js"></script>
+  <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.4.0.min.js"></script>
+  {{ the_script|safe }}
+
+  <div style="height:50px;display:block;"> </div>
+  <p>
+    <i>All rights reserved to the <a href="https://www.billboard.com/charts/billboard-200" target="_blank">2020 Billboard</a>.</i>
+  </p>
+
+    </center>
+  </body>
+</html>

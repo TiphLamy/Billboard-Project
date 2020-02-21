@@ -1,20 +1,31 @@
 <html>
-  <body>
+  <body style="background-color: #c3c5d8">
+  	<center>
     <h1>What we found:</h1>
 
     <h2>Albums</h2>
     {% for i in range(albums|length) %}
-      <table border="0">
+      <table border="1">
 		  <tbody>
 			  <tr>
-				  <td>Album: {{albums[i]}}</td>
-				  <td>Artist: {{artists[i]}}</td>
-				  <td>Rank: {{ranks[i]}}</td></br>
+				  <td style="width:100px" bgcolor="FF868B" >Rank: {{ranks[i]}}</td></br>
+				  <td style="width:80px" bgcolor="ffa69e" >Last Week: {{last_week[i]}}</td>
+				  <td style="width:80px" bgcolor="84dcc6">Peak: {{peak[i]}} for {{duration[i]}} weeks</td>
+				  <td style="width:300px" bgcolor="a5ffd6">Album: {{albums[i]}}</td>
+				  <td style="width:200px" bgcolor="a5ffd6">Artist: {{artists[i]}}</td>
+				  
 			  </tr>
 		  </tbody>
       </table>
     {% endfor %}
-
-    <a href='/MusicSearch'> Look for something else </a>
+	
+	<br/>
+    <a href='/MusicSearch'> Looking for something else ? </a>
+    <br>
+    <div style="height:50px;display:block;"> </div>
+  	  <p>
+	    <i>All rights reserved to the <a href="https://www.billboard.com/charts/billboard-200" target="_blank">2020 Billboard</a>.</i>
+	  </p>
+	</center>
   </body>
 </html>
