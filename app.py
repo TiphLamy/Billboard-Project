@@ -103,12 +103,22 @@ def sucess(search_word):
     }
     #result=["bonjour","merci"]
     result = es_client.search(index="albms", body=QUERY)
-    album = [elt['_source']['album'] for elt in result["hits"]["hits"]]
-    artist = [elt['_source']['artist'] for elt in result["hits"]["hits"]]
-    rank = [elt['_source']['rank'] for elt in result["hits"]["hits"]]
-    peak = [elt['_source']['peak'] for elt in result["hits"]["hits"]]
-    duration = [elt['_source']['duration'] for elt in result["hits"]["hits"]]
-    last_week = [elt['_source']['last_week'] for elt in result["hits"]["hits"]]
+    source = result["hits"]["hits"]
+
+    seen = set()
+    new_source = []
+    for d in source:
+        t = tuple(d["_source"].items())
+        if t not in seen:
+            seen.add(t)
+            new_source.append(d)
+
+    album = [elt['_source']['album'] for elt in new_source]
+    artist = [elt['_source']['artist'] for elt in new_source]
+    rank = [elt['_source']['rank'] for elt in new_source]
+    peak = [elt['_source']['peak'] for elt in new_source]
+    duration = [elt['_source']['duration'] for elt in new_source]
+    last_week = [elt['_source']['last_week'] for elt in new_source]
 
     return render_template('results.html',albums=album,artists=artist,ranks=rank, peak=peak, duration=duration, last_week=last_week)
 
