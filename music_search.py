@@ -15,7 +15,7 @@ from elasticsearch.helpers import bulk
 import pandas as pd
 import numpy as np
 
-LOCAL = False
+LOCAL = True
 
 es_client = Elasticsearch(hosts=["localhost" if LOCAL else "elasticsearch"])
 
@@ -23,6 +23,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 #app.config['MONGO_URL'] = '27017'
 #mongo = PyMongo(app,uri='mongodb://localhost:27017')
+
+client = MongoClient()
+db = client["client_name"]
+billboard = db["billboard"]
+
+df_billboard = pd.DataFrame(list(billboard.find()))
+df_billboard_clean = df_billboard.drop(labels='_id',axis='columns')
+documents = df_billboard_clean.fillna("").to_dict(orient="records")
 
 def generate_data(documents):
     for docu in documents:
@@ -35,9 +43,7 @@ def generate_data(documents):
 
 @app.route('/')
 def rien():
-	client = MongoClient()
-	db = client["client_name"]
-	billboard = db["billboard"]
+	
 	return redirect('/MusicSearch')
 
 
@@ -52,23 +58,23 @@ def MusicSearch():
 @app.route('/information/<search_word>')
 def sucess(search_word):
 
-	df_billboard = pd.DataFrame(list(billboard.find()))
-	df_billboard_clean = df_billboard.drop(labels='_id',axis='columns')
-	documents = df_billboard_clean.fillna("").to_dict(orient="records")
+	
 	bulk(es_client, generate_data(documents))
 
 	QUERY = {
 	  "query": {
 		"multi_match" : {
 		  "query":    search_word,
-		  "fields": [ "artist" ] 
+		  "fields": [ "artist", "album" ] 
 		}
 	  }
 	}
-
+	#result=["bonjour","merci"]
 	result = es_client.search(index="albums", body=QUERY)
-	[elt['_source']['album'] for elt in result["hits"]["hits"]]
-	return render_template('results.html',albums=result)
+	album = [elt['_source']['album'] for elt in result["hits"]["hits"]]
+	artist = [elt['_source']['artist'] for elt in result["hits"]["hits"]]
+	rank = [elt['_source']['rank'] for elt in result["hits"]["hits"]]
+	return render_template('results.html',albums=album,artists=artist,ranks=rank)
 
 
 

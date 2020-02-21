@@ -3,8 +3,16 @@
     <h1>What we found:</h1>
 
     <h2>Albums</h2>
-    {% for album in albums %}
-      <p>{{album}}</p>
+    {% for i in range(albums|length) %}
+      <table border="0">
+		  <tbody>
+			  <tr>
+				  <td>Album: {{albums[i]}}</td>
+				  <td>Artist: {{artists[i]}}</td>
+				  <td>Rank: {{ranks[i]}}</td></br>
+			  </tr>
+		  </tbody>
+      </table>
     {% endfor %}
 
     <a href='/MusicSearch'> Look for something else </a>
