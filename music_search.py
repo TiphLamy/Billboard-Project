@@ -24,6 +24,14 @@ app.config['SECRET_KEY'] = 'you-will-never-guess'
 #app.config['MONGO_URL'] = '27017'
 #mongo = PyMongo(app,uri='mongodb://localhost:27017')
 
+def generate_data(documents):
+    for docu in documents:
+        yield {
+            "_index": "albums",
+            "_type": "album",
+            "_source": {k:v if v else None for k,v in docu.items()},
+        }
+
 
 @app.route('/')
 def rien():
@@ -47,13 +55,7 @@ def sucess(search_word):
 	df_billboard = pd.DataFrame(list(billboard.find()))
 	df_billboard_clean = df_billboard.drop(labels='_id',axis='columns')
 	documents = df_billboard_clean.fillna("").to_dict(orient="records")
-
-	for docu in documents:
-		yield {
-			"_index": "albums",
-			"_type": "album",
-			"_source": {k:v if v else None for k,v in docu.items()},
-		}
+	bulk(es_client, generate_data(documents))
 
 	QUERY = {
 	  "query": {
@@ -66,8 +68,7 @@ def sucess(search_word):
 
 	result = es_client.search(index="albums", body=QUERY)
 	[elt['_source']['album'] for elt in result["hits"]["hits"]]
-	return render_template('results.html')
-
+	return render_template('results.html',albums=result)
 
 
 
