@@ -11,6 +11,9 @@ class ArticleItem(scrapy.Item):
     album = scrapy.Field()
     artist = scrapy.Field()
     rank = scrapy.Field()
+    peak=scrapy.Field()
+    duration=scrapy.Field()
+    last_week=scrapy.Field()
 
 class NewscrawlerItem(scrapy.Item):
 

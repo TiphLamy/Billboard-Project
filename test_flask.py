@@ -1,10 +1,15 @@
 from flask import Flask
+from flask import request
+from flask import render_template, render_template_string
+from flask import flash, redirect, request, url_for
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly
 import plotly.graph_objs as go
 import json
 import numpy as np
+
 from bokeh.embed import json_item
 from bokeh.plotting import figure
 from bokeh.resources import CDN
@@ -12,9 +17,19 @@ from jinja2 import Template
 from bokeh.io import show, output_file
 import os
 from pymongo import MongoClient
+from search_bar import SearchBar
 
-from flask import render_template, render_template_string
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
+
+
+LOCAL = True
+
+es_client = Elasticsearch(hosts=["localhost" if LOCAL else "elasticsearch"])
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'you-will-never-guess'
+
 
 page = Template("""
 <!DOCTYPE html>
@@ -43,10 +58,51 @@ client = MongoClient()
 db = client["client_name"]
 billboard_200 = db["billboard"]
 
+
+
+
+
 @app.route('/')
 def root():
     return page.render(resources=CDN.render())
 
+@app.route('/MusicSearch', methods=('GET', 'POST'))
+def MusicSearch():
+    form = SearchBar()
+    if form.validate_on_submit():
+        return redirect('/information/'+form.typing.data)
+    return render_template('music_search.html', form=form)
+
+@app.route('/information/<search_word>')
+def sucess(search_word):
+
+	df_billboard = pd.DataFrame(list(billboard_200.find()))
+	df_billboard_clean = df_billboard.drop(labels='_id',axis='columns')
+	documents = df_billboard_clean.fillna("").to_dict(orient="records")
+	#bulk(es_client, generate_data(documents))
+	
+	QUERY = {
+	  "query": {
+		"multi_match" : {
+		  "query":    search_word,
+		  "fields": [ "artist", "album" ] 
+		}
+	  }
+	}
+
+	result = es_client.search(index="albums", body=QUERY)
+	liste = [elt['_source']['album'] for elt in result["hits"]["hits"]]
+	return render_template('results.html',albums=liste)
+	
+def generate_data(documents):
+    for docu in documents:
+        yield {
+            "_index": "albums",
+            "_type": "album",
+            "_source": {k:v if v else None for k,v in docu.items()},
+        }
+        
+        
 @app.route('/item')
 def item():
     output_file("templates/item.html")

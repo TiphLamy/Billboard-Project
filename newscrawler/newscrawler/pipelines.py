@@ -23,6 +23,11 @@ class TextPipeline(object):
         if item['album']:
             item["album"] = self.clean_spaces(item["album"])
             item["artist"] = self.clean_spaces(item["artist"])
+            item["rank"] = self.clean_spaces(item["rank"])
+            item["peak"] = self.clean_spaces(item["peak"])
+            item["duration"] = self.clean_spaces(item["duration"])
+            item["last_week"] = self.clean_spaces(item["last_week"])
+            
             return item
         else:
             raise DropItem("Missing title in %s" % item)
