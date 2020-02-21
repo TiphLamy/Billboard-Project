@@ -12,8 +12,8 @@ class BillboardSpider(scrapy.Spider):
             artist = response.css("span.chart-element__information")[i].css("span.chart-element__information__artist.text--truncate.color--secondary::text").extract_first()
             rank = response.css("span.chart-element__rank.flex--column.flex--xy-center.flex--no-shrink")[i].css("span.chart-element__rank__number::text").extract_first()
             peak = response.css("div.chart-element__metas.display--flex.flex--y-center")[i].css("div.chart-element__meta.text--center.color--secondary.text--peak::text").extract_first()
-			duration = response.css("div.chart-element__metas.display--flex.flex--y-center")[i].css("div.chart-element__meta.text--center.color--secondary.text--week::text").extract_first()
-			last_week = response.css("div.chart-element__metas.display--flex.flex--y-center")[i].css("div.chart-element__meta.text--center.color--secondary.text--last::text").extract_first()
+            duration = response.css("div.chart-element__metas.display--flex.flex--y-center")[i].css("div.chart-element__meta.text--center.color--secondary.text--week::text").extract_first()
+            last_week = response.css("div.chart-element__metas.display--flex.flex--y-center")[i].css("div.chart-element__meta.text--center.color--secondary.text--last::text").extract_first()
             yield items.ArticleItem(
               album=album,
               artist=artist,

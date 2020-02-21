@@ -76,11 +76,8 @@ def MusicSearch():
 @app.route('/information/<search_word>')
 def sucess(search_word):
 
-	df_billboard = pd.DataFrame(list(billboard_200.find()))
-	df_billboard_clean = df_billboard.drop(labels='_id',axis='columns')
-	documents = df_billboard_clean.fillna("").to_dict(orient="records")
-	#bulk(es_client, generate_data(documents))
-	
+	bulk(es_client, generate_data(documents))
+
 	QUERY = {
 	  "query": {
 		"multi_match" : {
@@ -89,10 +86,12 @@ def sucess(search_word):
 		}
 	  }
 	}
-
+	#result=["bonjour","merci"]
 	result = es_client.search(index="albums", body=QUERY)
-	liste = [elt['_source']['album'] for elt in result["hits"]["hits"]]
-	return render_template('results.html',albums=liste)
+	album = [elt['_source']['album'] for elt in result["hits"]["hits"]]
+	artist = [elt['_source']['artist'] for elt in result["hits"]["hits"]]
+	rank = [elt['_source']['rank'] for elt in result["hits"]["hits"]]
+	return render_template('results.html',albums=album,artists=artist,ranks=rank)
 	
 def generate_data(documents):
     for docu in documents:
