@@ -14,3 +14,6 @@ Dans le dossier **"Billboard-Project"**:
     git push 
   
 Tout ce qui a été modifié est mis à jour sur le git
+
+Le projet a été réalisé par:
+Tphanie Lamy-Verdin, Annie Lim et Jean-Philippe Vichaikit
