@@ -1,3 +1,8 @@
+"""
+Permet l'affichage web des données scrapées
+en utilisant Flask, MongoDB et ElasticSearch 
+"""
+
 from flask import Flask
 from flask import request
 from flask import render_template, render_template_string
@@ -33,46 +38,16 @@ LOCAL = True
 es_client = Elasticsearch(hosts=["localhost" if LOCAL else "elasticsearch"])
 
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = 'you-will-never-guess'
-
-
-page = Template("""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  {{ resources }}
-</head>
-<body>
-  <div id="myplot"></div>
-  <div id="myplot2"></div>
-  <script>
-  fetch('/plot')
-    .then(function(response) { return response.json(); })
-    .then(function(item) { Bokeh.embed.embed_item(item); })
-  </script>
-  <script>
-  fetch('/plot2')artist = scrap.groupby('artist').size()
-artist = artist.sort_values(ascending=True)
-    .then(function(response) { return response.json(); })
-    .then(function(item) { Bokeh.embed.embed_item(item, "myplot2"); })
-  </script>
-</body>
-""")
-
-client = MongoClient()
-db = client["client_name"]
-billboard_200 = db["billboard"]
-
-
-
-@app.route('/')
-def root():
-    return page.render(resources=CDN.render())
 
 
 
 @app.route('/MusicSearch', methods=('GET', 'POST'))
 def MusicSearch():
+    """
+    Création de la barre de recherche ainsi que de l'affichage des données, et affichage du bargraph
+    """
     form = SearchBar()
     if form.validate_on_submit():
         return redirect('/information/'+form.typing.data)
@@ -87,6 +62,9 @@ def MusicSearch():
 
 @app.route('/information/<search_word>')
 def sucess(search_word):
+    """
+    Affichage des résultats de la recherche en fonction des artistes et albums.
+    """
     df_billboard = pd.DataFrame(list(billboard_200.find()))
     df_billboard_clean = df_billboard.drop(labels='_id',axis='columns')
     documents = df_billboard_clean.fillna("").to_dict(orient="records")
@@ -123,6 +101,9 @@ def sucess(search_word):
     return render_template('results.html',albums=album,artists=artist,ranks=rank, peak=peak, duration=duration, last_week=last_week)
 
 def generate_data(documents):
+    """
+    Génération des données cherchées
+    """
     for docu in documents:
         yield {
             "_index": "albms",
@@ -132,6 +113,9 @@ def generate_data(documents):
         
         
 def create_bargraph():
+    """
+    Création d'un bargraph en utilisant create_bar_chart
+    """
     output_file("templates/music_search.html")
 
     artist = billboard_200.aggregate([{"$group" : {"_id" : "$artist", "sum" : {"$sum" : 1}}}])
@@ -154,6 +138,9 @@ def create_bargraph():
     return div, script
 
 def create_table():
+    """
+    Création du tableau
+    """
     output_file("templates/music_search.html")
     _items = billboard_200.find()
     items = []
@@ -175,6 +162,9 @@ def create_table():
 
 
 def create_hover_tool():
+    """
+    Création d'un hover sur le bargraph
+    """
     hover_html = """
       <div>
         <span class="hover-tooltip">@sum albums</span>
@@ -184,6 +174,9 @@ def create_hover_tool():
     return None
 
 def create_bar_chart(data, title, x_name, y_name, hover_tool=None, width=1200, height=300):
+    """
+    Création d'un bargraph qui compte l'occurence du nombre d'album dans le top 200 (seules les 20 premieres valeurs sont affichées)
+    """
     source = ColumnDataSource(data)
     xdr = FactorRange(factors=data[x_name])
     ydr = Range1d(start=0,end=max(data[y_name])*1.5)
