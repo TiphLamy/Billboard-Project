@@ -27,11 +27,15 @@ from bokeh.io import show, output_file
 import os
 from pymongo import MongoClient
 from search_bar import SearchBar
-from graphs import create_bargraph
+#from graphs import create_bargraph
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 
+# on a ajouté ces trois lignes, car nous avions supprimer la connexion à la bdd sans faire expres...
+client = MongoClient()
+db = client["client_name"]
+billboard_200 = db["billboard"]
 
 LOCAL = True
 
